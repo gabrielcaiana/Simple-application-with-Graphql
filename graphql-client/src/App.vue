@@ -1,50 +1,52 @@
 <template>
   <div id="app">
-    <p class="username">{{ currentUser.username }}'s posts:</p>
-    <ul>
-      <li v-for="post in posts" :key="post.id">{{ post.content }}</li>
-    </ul>
-    <div>
-      <input v-model="newPostContent">
-      <button @click="addPost()">Add Post</button>
+    <div class="container">
+      <p class="username">{{ currentUser.username }} -  posts:</p>
+      <ul>
+        <li v-for="post in posts" :key="post.id">{{ post.content }}</li>
+      </ul>
+      <div>
+        <label>Inserir</label>
+        <input v-model="newPostContent" />
+        <button @click="addPost()">Adicionar Post</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { CURRENT_USER, POSTS_BY_USER, ADD_POST  } from '@/queries'
+import { CURRENT_USER, POSTS_BY_USER, ADD_POST } from '@/queries';
 
 function updateAddPost(cache, result) {
-
-  let newPost = result.data.addPost
+  let newPost = result.data.addPost;
 
   let cacheId = {
-    query: POSTS_BY_USER, 
+    query: POSTS_BY_USER,
     variables: { userId: this.currentUser.id },
-  }
+  };
 
-  const data = cache.readQuery(cacheId)
-  const newData = [ ...data.postsByUser, newPost ]
+  const data = cache.readQuery(cacheId);
+  const newData = [...data.postsByUser, newPost];
 
   cache.writeQuery({
     ...cacheId,
-    data: { postsByUser: newData }
-  })
+    data: { postsByUser: newData },
+  });
 }
 
-  export default {
+export default {
   name: 'app',
-  data: function(){
+  data: function () {
     return {
       currentUser: { username: 'user' },
       posts: [],
-      newPostContent: ''
-    }
+      newPostContent: '',
+    };
   },
   methods: {
     addPost() {
       this.$apollo.mutate({
-        mutation: ADD_POST, 
+        mutation: ADD_POST,
         variables: { content: this.newPostContent },
         update: updateAddPost.bind(this),
 
@@ -54,10 +56,10 @@ function updateAddPost(cache, result) {
             __typename: 'Post',
             id: 'xyz-?',
             content: this.newPostContent,
-            userId: this.currentUser.id
+            userId: this.currentUser.id,
           },
-        }
-      })
+        },
+      });
       this.newPostContent = '';
     },
   },
@@ -67,16 +69,21 @@ function updateAddPost(cache, result) {
     posts: {
       query: POSTS_BY_USER,
       variables() {
-        return { userId: this.currentUser.id }
+        return { userId: this.currentUser.id };
       },
       update(data) {
-        return data.postsByUser
-      }  
-    }
-  }
-}
+        return data.postsByUser;
+      },
+    },
+  },
+};
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="css" scoped>
+  #app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 </style>
