@@ -12,34 +12,11 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
-
-const CURRENT_USER = gql`query {
-  currentUser {
-    id
-    username
-  }
-}`;
-
-const POSTS_BY_USER = gql`query ($userId: String!) {
-  postsByUser(userId: $userId) {
-    id
-    content
-  }
-}`;
-
-const ADD_POST = gql`mutation ($content: String!) {
-  addPost(content: $content) {
-    id
-    content
-  }
-}`;
+import { CURRENT_USER, POSTS_BY_USER, ADD_POST  } from '@/queries'
 
 function updateAddPost(cache, result) {
 
   let newPost = result.data.addPost
-
-  console.log(newPost.id)
 
   let cacheId = {
     query: POSTS_BY_USER, 
